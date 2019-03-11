@@ -7,7 +7,7 @@ env:
     # include $HOME/.local/bin for `aws`
     - PATH=$HOME/.local/bin:$PATH
     - ARTIFACTS_BUCKET=beetest
-    - S3_STORAGE_LOCATION = s3://$ARTIFACTS_BUCKET/test/build/$TRAVIS_BUILD_NUMBER
+    - S3_STORAGE_LOCATION=s3://$ARTIFACTS_BUCKET/test/build/$TRAVIS_BUILD_NUMBER
 
 before_install:
   # set up awscli packages
@@ -19,10 +19,15 @@ jobs:
   include:
     - stage: "Tests and Builds"
       name: "Unit Tests"
-      script: echo TEST | tee > ~/$TRAVIS_BUILD_NUMBER/one
-    - name: "Build"
-      script: echo two | tee > ~/$TRAVIS_BUILD_NUMBER/two
-    - stage: use shared files
+      script: echo TEST | tee > ~/$TRAVIS_BUILD_NUMBER/test.txt
+    - name: "Build 1"
+      env: BUILD=1 
+      script: echo $BUILD | tee > ~/$TRAVIS_BUILD_NUMBER/build_$BUILD.txt
+    - name: "Build 2"
+      env: BUILD=2 
+      script: echo $BUILD | tee > ~/$TRAVIS_BUILD_NUMBER/build_$BUILD.txt
+
+    - stage: "Deploy"
       script:
         - cat ~/$TRAVIS_BUILD_NUMBER/*
       after_success:
