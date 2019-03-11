@@ -11,6 +11,7 @@ env:
   matrix:
     - BUILD=1 TAG=k
     - BUILD=2 TAG=2TAG
+    - BUILD=3 TAG=asdflj
 
 before_install:
   # set up awscli packages
