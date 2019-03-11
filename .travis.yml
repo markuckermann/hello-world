@@ -21,17 +21,17 @@ jobs:
       name: "Unit Tests"
       script: echo TEST | tee > ~/$TRAVIS_BUILD_NUMBER/test.txt
     - name: "Build 1"
-      env: BUILD=1 
-      script: echo $BUILD | tee > ~/$TRAVIS_BUILD_NUMBER/build_$BUILD.txt
+      env: BUILD=1 TAG=k
+      script: echo $BUILD $TAG | tee > ~/$TRAVIS_BUILD_NUMBER/build_$BUILD.txt
     - name: "Build 2"
-      env: BUILD=2 
-      script: echo $BUILD | tee > ~/$TRAVIS_BUILD_NUMBER/build_$BUILD.txt
+      env: BUILD=2 TAG=J
+      script: echo $BUILD $TAG | tee > ~/$TRAVIS_BUILD_NUMBER/build_$BUILD.txt
 
     - stage: "Deploy"
       script:
         - cat ~/$TRAVIS_BUILD_NUMBER/*
       after_success:
-        - aws s3 rm --recursive $S3_STORAGE_LOCATION  # clean up after ourselves
+        #- aws s3 rm --recursive $S3_STORAGE_LOCATION  # clean up after ourselves
 
 after_success:
   - aws s3 sync ~/$TRAVIS_BUILD_NUMBER $S3_STORAGE_LOCATION 
