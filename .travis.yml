@@ -6,25 +6,27 @@ env:
   global:
     # include $HOME/.local/bin for `aws`
     - PATH=$HOME/.local/bin:$PATH
-    - $ARTIFACTS_BUCKET=beetest
+    - ARTIFACTS_BUCKET=beetest
+    - S3_STORAGE_LOCATION = s3://$ARTIFACTS_BUCKET/test/build/$TRAVIS_BUILD_NUMBER
 
 before_install:
   # set up awscli packages
   - pip install --user awscli
   - mkdir -p ~/$TRAVIS_BUILD_NUMBER
-  - aws s3 sync s3://$ARTIFACTS_BUCKET/test/_build/$TRAVIS_BUILD_NUMBER ~/$TRAVIS_BUILD_NUMBER
+  - aws s3 sync $S3_STORAGE_LOCATION ~/$TRAVIS_BUILD_NUMBER
 
 jobs:
   include:
-    - stage: setup files
-      script: echo one | tee > ~/$TRAVIS_BUILD_NUMBER/one
-    - stage: setup files
+    - stage: "Tests and Builds"
+      name: "Unit Tests"
+      script: echo TEST | tee > ~/$TRAVIS_BUILD_NUMBER/one
+    - name: "Build"
       script: echo two | tee > ~/$TRAVIS_BUILD_NUMBER/two
     - stage: use shared files
       script:
         - cat ~/$TRAVIS_BUILD_NUMBER/*
       after_success:
-        - aws s3 rm --recursive s3://travis-build-stages-shared-storage-test/$TRAVIS_BUILD_NUMBER # clean up after ourselves
+        - aws s3 rm --recursive $S3_STORAGE_LOCATION  # clean up after ourselves
 
 after_success:
-  - aws s3 sync ~/$TRAVIS_BUILD_NUMBER s3://travis-build-stages-shared-storage-test/$TRAVIS_BUILD_NUMBER
+  - aws s3 sync ~/$TRAVIS_BUILD_NUMBER $S3_STORAGE_LOCATION 
