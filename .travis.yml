@@ -8,6 +8,9 @@ env:
     - PATH=$HOME/.local/bin:$PATH
     - ARTIFACTS_BUCKET=beetest
     - S3_STORAGE_LOCATION=s3://$ARTIFACTS_BUCKET/test/build/$TRAVIS_BUILD_NUMBER
+  matrix:
+    - BUILD=1 TAG=k
+    - BUILD=2 TAG=2TAG
 
 before_install:
   # set up awscli packages
@@ -20,12 +23,12 @@ jobs:
     - stage: "Tests and Builds"
       name: "Unit Tests"
       script: echo TEST | tee > ~/$TRAVIS_BUILD_NUMBER/test.txt
-    - name: "Build 1"
-      env: BUILD=1 TAG=k
+    - name: "Build"
+    #  env: BUILD=1 TAG=k
       script: echo $BUILD $TAG | tee > ~/$TRAVIS_BUILD_NUMBER/build_$BUILD.txt
-    - name: "Build 2"
-      env: BUILD=2 TAG=J
-      script: echo $BUILD $TAG | tee > ~/$TRAVIS_BUILD_NUMBER/build_$BUILD.txt
+    #- name: "Build 2"
+    #  env: BUILD=2 TAG=J
+    #  script: echo $BUILD $TAG | tee > ~/$TRAVIS_BUILD_NUMBER/build_$BUILD.txt
 
     - stage: "Deploy"
       script:
