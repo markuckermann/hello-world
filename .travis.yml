@@ -24,9 +24,9 @@ script: echo $BUILD $TAG | tee > ~/$TRAVIS_BUILD_NUMBER/build_$BUILD.txt
 
 jobs:
   include:
-    - stage: Test
+    - stage: test
       name: "Unit Tests"
-      script: echo TEST | tee > ~/$TRAVIS_BUILD_NUMBER/test.txt
+      script: echo TEST $BUILD $TAG | tee > ~/$TRAVIS_BUILD_NUMBER/test.txt
     #- name: "Build"
     #  env: BUILD=1 TAG=k
       
@@ -34,7 +34,8 @@ jobs:
     #  env: BUILD=2 TAG=J
     #  script: echo $BUILD $TAG | tee > ~/$TRAVIS_BUILD_NUMBER/build_$BUILD.txt
 
-    - stage: "Deploy"
+    - stage: deploy
+      env: BLA=cu
       script:
         - cat ~/$TRAVIS_BUILD_NUMBER/*
       after_success:
