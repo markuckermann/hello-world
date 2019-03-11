@@ -18,14 +18,18 @@ before_install:
   - mkdir -p ~/$TRAVIS_BUILD_NUMBER
   - aws s3 sync $S3_STORAGE_LOCATION ~/$TRAVIS_BUILD_NUMBER
 
+install: echo $TAG
+
+script: echo $BUILD $TAG | tee > ~/$TRAVIS_BUILD_NUMBER/build_$BUILD.txt
+
 jobs:
   include:
-    - stage: "Tests and Builds"
+    - stage: Test
       name: "Unit Tests"
       script: echo TEST | tee > ~/$TRAVIS_BUILD_NUMBER/test.txt
-    - name: "Build"
+    #- name: "Build"
     #  env: BUILD=1 TAG=k
-      script: echo $BUILD $TAG | tee > ~/$TRAVIS_BUILD_NUMBER/build_$BUILD.txt
+      
     #- name: "Build 2"
     #  env: BUILD=2 TAG=J
     #  script: echo $BUILD $TAG | tee > ~/$TRAVIS_BUILD_NUMBER/build_$BUILD.txt
