@@ -1,46 +1,42 @@
+branches:
+  only:
+  - master
+  - demo
+  - /^rc-\d+\.\d+/
+
+services:
+  - docker
+
 language: cpp
 os: linux
-dist: trusty
+dist: bionic
 
 env:
   global:
-    # include $HOME/.local/bin for `aws`
-    - PATH=$HOME/.local/bin:$PATH
-    - ARTIFACTS_BUCKET=beetest
-    - S3_STORAGE_LOCATION=s3://$ARTIFACTS_BUCKET/test/build/$TRAVIS_BUILD_NUMBER
+    - GLOBALVAR=imaglobalvar
   matrix:
     - BUILD=1 TAG=k
     - BUILD=2 TAG=2TAG
     - BUILD=3 TAG=asdflj
 
 before_install:
-  # set up awscli packages
-  - pip install --user awscli
-  - mkdir -p ~/$TRAVIS_BUILD_NUMBER
-  - aws s3 sync $S3_STORAGE_LOCATION ~/$TRAVIS_BUILD_NUMBER
+  - echo "before install: $TAG"
 
-install: echo $TAG
+install: echo "No install action required"
 
-script: echo $BUILD $TAG | tee > ~/$TRAVIS_BUILD_NUMBER/build_$BUILD.txt
+script:
+  - echo "Running build $BUILD $TAG"
+  - echo $BUILD $TAG | tee > ~/$TRAVIS_BUILD_NUMBER/build_$BUILD.txt
 
 jobs:
   include:
     - stage: test
       name: "Unit Tests"
       script: echo TEST $BUILD $TAG | tee > ~/$TRAVIS_BUILD_NUMBER/test.txt
-    #- name: "Build"
-    #  env: BUILD=1 TAG=k
-      
-    #- name: "Build 2"
-    #  env: BUILD=2 TAG=J
-    #  script: echo $BUILD $TAG | tee > ~/$TRAVIS_BUILD_NUMBER/build_$BUILD.txt
 
     - stage: deploy
-      env: BLA=cu
+      env:
+      install:
+      before_script:
       script:
         - cat ~/$TRAVIS_BUILD_NUMBER/*
-      after_success:
-        #- aws s3 rm --recursive $S3_STORAGE_LOCATION  # clean up after ourselves
-
-after_success:
-  - aws s3 sync ~/$TRAVIS_BUILD_NUMBER $S3_STORAGE_LOCATION 
