@@ -14,7 +14,7 @@ dist: bionic
 env:
   global:
     - GLOBALVAR=imaglobalvar
-    - BUILD_ARTEFACTS_DIR=`pwd`/artefacts/$TRAVIS_BUILD_NUMBER
+    - BUILD_ARTEFACTS_DIR=$TRAVIS_BUILD_DIR/artefacts/$TRAVIS_BUILD_NUMBER
   matrix:
     - BUILD=1 TAG=1TAG
     - BUILD=2 TAG=2TAG
