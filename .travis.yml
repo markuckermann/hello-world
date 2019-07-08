@@ -34,7 +34,7 @@ jobs:
       name: "Unit Tests"
       script: echo TEST $BUILD $TAG | tee > ~/$TRAVIS_BUILD_NUMBER/test.txt
 
-    - stage: deploy&tag
+    - stage: deploy
       env:
       install:
       before_script: 
@@ -42,17 +42,21 @@ jobs:
         - echo "HELLOOOO" | tee > ~/$TRAVIS_BUILD_NUMBER/deploy.txt
       script:
         - cat ~/$TRAVIS_BUILD_NUMBER/*
-
+      # the deploy stage is used for tagging the build on GitHub
       before_deploy:
         # Set up git user name and tag this commit
         - git config --local user.name "builds@travis-ci.com"
         - git config --local user.email "Travis CI"
         - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
-        - git tag $TRAVIS_TAG -a -m "Generated tag from TravisCI build $TRAVIS_BUILD_NUMBER"
+        - git tag $TRAVIS_TAG
       deploy:
         provider: releases
         api_key: $GITHUB_OAUTH_TOKEN
         skip_cleanup: true
+        body: Release automatically generated from TravisCI build $TRAVIS_BUILD_NUMBER
+        draft: true 
+        prerelease: true
+        file: ~/$TRAVIS_BUILD_NUMBER/deploy.txt
         on:
           branch: master
 
