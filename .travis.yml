@@ -21,6 +21,7 @@ env:
 
 before_install: 
   - echo "before install"
+  - mkdir -p ~/$TRAVIS_BUILD_NUMBER
 
 install: echo "No install action required"
 
