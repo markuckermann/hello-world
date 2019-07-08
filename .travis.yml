@@ -19,7 +19,7 @@ env:
     - BUILD=2 TAG=2TAG
 
 before_install: 
-  - echo "before install"
+  - echo "before install make directory for build $TRAVIS_BUILD_NUMBER"
   - mkdir -p ~/$TRAVIS_BUILD_NUMBER
 
 install: echo "No install action required"
@@ -39,7 +39,7 @@ jobs:
       install:
       before_script: 
         - mkdir -p ~/$TRAVIS_BUILD_NUMBER
-        - echo "HELLOOOO" | tee > ~/$TRAVIS_BUILD_NUMBER/deploy.txt
+        - echo "HELLOOOO this is travis build $TRAVIS_BUILD_NUMBER" | tee > ~/$TRAVIS_BUILD_NUMBER/deploy.txt
       script:
         - cat ~/$TRAVIS_BUILD_NUMBER/*
       # the deploy stage is used for tagging the build on GitHub
