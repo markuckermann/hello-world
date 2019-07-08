@@ -19,8 +19,8 @@ env:
     - BUILD=2 TAG=2TAG
     - BUILD=3 TAG=asdflj
 
-before_install:
-  - echo "before install: $TAG"
+before_install: 
+  - echo "before install"
 
 install: echo "No install action required"
 
