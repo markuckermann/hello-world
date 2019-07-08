@@ -15,9 +15,8 @@ env:
   global:
     - GLOBALVAR=imaglobalvar
   matrix:
-    - BUILD=1 TAG=k
+    - BUILD=1 TAG=1TAG
     - BUILD=2 TAG=2TAG
-    - BUILD=3 TAG=asdflj
 
 before_install: 
   - echo "before install"
@@ -35,7 +34,7 @@ jobs:
       name: "Unit Tests"
       script: echo TEST $BUILD $TAG | tee > ~/$TRAVIS_BUILD_NUMBER/test.txt
 
-    - stage: deploy
+    - stage: deploy&tag
       env:
       install:
       before_script: 
@@ -44,17 +43,17 @@ jobs:
       script:
         - cat ~/$TRAVIS_BUILD_NUMBER/*
 
-before_deploy:
-      # Set up git user name and tag this commit
-      - git config --local user.name "markuckermann"
-      - git config --local user.email "mark.uckermann@gmail.com"
-      - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
-      - git tag $TRAVIS_TAG
-    deploy:
-      provider: releases
-      api_key: $GITHUB_OAUTH_TOKEN
-      skip_cleanup: true
-      on:
-        branch: master
+      before_deploy:
+        # Set up git user name and tag this commit
+        - git config --local user.name "markuckermann"
+        - git config --local user.email "mark.uckermann@gmail.com"
+        - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
+        - git tag $TRAVIS_TAG
+      deploy:
+        provider: releases
+        api_key: $GITHUB_OAUTH_TOKEN
+        skip_cleanup: true
+        on:
+          branch: master
 
 #https://github.com/travis-ci/travis-ci/issues/1476
