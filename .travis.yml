@@ -14,35 +14,35 @@ dist: bionic
 env:
   global:
     - GLOBALVAR=imaglobalvar
-    - BUILD_ARTEFACTS_DIR=artefacts/$TRAVIS_BUILD_NUMBER
+    - BUILD_ARTEFACTS_DIR=$TRAVIS_BUILD_DIR/artefacts/$TRAVIS_BUILD_NUMBER
   matrix:
     - BUILD=1 TAG=1TAG
     - BUILD=2 TAG=2TAG
 
 before_install: 
   - echo "before install make directory for build $TRAVIS_BUILD_NUMBER"
-  - mkdir -p BUILD_ARTEFACTS_DIR
+  - mkdir -p $BUILD_ARTEFACTS_DIR
 
 install: echo "No install action required"
 
 script:
   - echo "Running build $BUILD $TAG"
-  - echo $BUILD $TAG | tee > BUILD_ARTEFACTS_DIR/build_$BUILD.txt
+  - echo $BUILD $TAG | tee > $BUILD_ARTEFACTS_DIR/build_$BUILD.txt
 
 jobs:
   include:
     - stage: test
       name: "Unit Tests"
-      script: echo TEST $BUILD $TAG | tee > BUILD_ARTEFACTS_DIR/test.txt
+      script: echo TEST $BUILD $TAG | tee > $BUILD_ARTEFACTS_DIR/test.txt
 
     - stage: deploy
       env:
       install:
       before_script: 
         - mkdir -p $TRAVIS_BUILD_NUMBER
-        - echo "HELLOOOO this is travis build $TRAVIS_BUILD_NUMBER" | tee > BUILD_ARTEFACTS_DIR/deploy.txt
+        - echo "HELLOOOO this is travis build $TRAVIS_BUILD_NUMBER" | tee > $BUILD_ARTEFACTS_DIR/deploy.txt
       script:
-        - cat BUILD_ARTEFACTS_DIR/*
+        - cat $BUILD_ARTEFACTS_DIR/*
       # the deploy stage is used for tagging the build on GitHub
       before_deploy:
         # Set up git user name and tag this commit
@@ -57,7 +57,7 @@ jobs:
         skip_cleanup: true
         body: Release automatically generated from TravisCI build $TRAVIS_BUILD_NUMBER.
         prerelease: true
-        #file: BUILD_ARTEFACTS_DIR/deploy.txt
+        file: $BUILD_ARTEFACTS_DIR/deploy.txt
         on:
           branch: master
 
